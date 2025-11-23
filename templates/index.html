@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Bienvenido al Medidor de Energía</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; background-color: #f4f4f9; }
+        .container { max-width: 800px; margin: 0 auto; background-color: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .btn-group button { 
+            padding: 15px 30px; 
+            margin: 10px; 
+            font-size: 1.1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        #btn-casa { background-color: #007bff; }
+        #btn-casa:hover { background-color: #0056b3; transform: scale(1.05); }
+        
+        #btn-empresa { background-color: #28a745; }
+        #btn-empresa:hover { background-color: #1e7e34; transform: scale(1.05); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👋 Bienvenido al Sistema de Medición de Consumo de Energía</h1>
+        <p>Selecciona el tipo de usuario para acceder a la aplicación:</p>
+        
+        <div class="btn-group">
+            <a href="{{ url_for('bienvenida', tipo_usuario='casa') }}">
+                <button id="btn-casa">🏠 Casa o Local</button>
+            </a>
+            
+            <a href="{{ url_for('bienvenida', tipo_usuario='empresa') }}">
+                <button id="btn-empresa">🏢 Empresa</button>
+            </a>
+        </div>
+        
+        <p style="margin-top: 40px; color: #6c757d;">Aquí podrás registrar y analizar tu consumo energético.</p>
+    </div>
+</body>
+</html>
