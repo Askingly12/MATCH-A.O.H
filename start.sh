@@ -1,2 +1,2 @@
 #!/bin/bash
-python -m gunicorn app:app
+aplicacion python -m gunicorn app:app
