@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cuestionario de Consumo</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; background-color: #f4f4f9; }
+        .container { max-width: 700px; margin: 0 auto; background-color: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-align: left;}
+        .back-link { margin-top: 30px; display: block; font-size: 1.1em; color: #007bff; text-decoration: none; text-align: center; }
+        .back-link:hover { text-decoration: underline; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .form-group button { 
+            background-color: #28a745; 
+            color: white; 
+            padding: 10px 15px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 1.1em; 
+            width: 100%; 
+            margin-top: 20px;
+        }
+        .form-group button:hover { background-color: #218838; }
+        h1, h2, h3 { text-align: center; color: #007bff; margin-bottom: 15px; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 30px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ titulo_apartado }}</h1>
+        <p style="text-align: center;">Por favor, completa el siguiente cuestionario para iniciar el diagnóstico energético.</p>
+
+        <form method="POST" action="{{ url_for('cuestionario') }}">
+            
+            {% if user_type == 'casa' %}
+            
+                <hr><h2>A. Datos generales</h2>
+                
+                <div class="form-group">
+                    <label for="tipo_vivienda">1. Tipo de vivienda:</label>
+                    <select id="tipo_vivienda" name="tipo_vivienda" required>
+                        <option value="casa">Casa</option>
+                        <option value="departamento">Departamento</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="num_habitantes">2. Número de habitantes:</label>
+                    <input type="number" id="num_habitantes" name="num_habitantes" min="1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="superficie_m2">3. Superficie aproximada de la vivienda (m²):</label>
+                    <input type="number" id="superficie_m2" name="superficie_m2" min="10" required>
+                </div>
+                
+                <hr><h3>B. Información del consumo eléctrico</h3>
+                
+                <div class="form-group">
+                    <label for="conoce_consumo">4. ¿Conoces tu consumo mensual en kWh?</label>
+                    <select id="conoce_consumo" name="conoce_consumo" required>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="consumo_kwh">5. Consumo mensual promedio (kWh):</label>
+                    <input type="number" id="consumo_kwh" name="consumo_kwh" min="0" step="any" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="medidor_inteligente">6. ¿Cuentas con medidor inteligente?</label>
+                    <select id="medidor_inteligente" name="medidor_inteligente" required>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+                
+                <hr><h3>C. Iluminación</h3>
+
+                <div class="form-group">
+                    <label for="tipo_focos">7. Tipo de focos principales:</label>
+                    <select id="tipo_focos" name="tipo_focos" required>
+                        <option value="led">LED</option>
+                        <option value="fluorescentes">Fluorescentes</option>
+                        <option value="incandescentes">Incandescentes</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="horas_iluminacion">8. Horas aproximadas de uso de iluminación al día:</label>
+                    <input type="number" id="horas_iluminacion" name="horas_iluminacion" min="0" max="24" step="any" required>
+                </div>
+
+                <hr><h3>D. Electrodomésticos principales</h3>
+
+                <div class="form-group">
+                    <label for="cant_refrigeradores">9. Cantidad de refrigeradores:</label>
+                    <input type="number" id="cant_refrigeradores" name="cant_refrigeradores" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tipo_refrigerador">10. Tipo de refrigerador:</label>
+                    <select id="tipo_refrigerador" name="tipo_refrigerador" required>
+                        <option value="inverter">Inverter</option>
+                        <option value="convencional">Convencional</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="uso_lavadora">11. Lavadora: horas de uso por semana:</label>
+                    <input type="number" id="uso_lavadora" name="uso_lavadora" min="0" step="any" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="uso_secadora">12. Secadora de ropa: horas de uso por semana (si existe):</label>
+                    <input type="number" id="uso_secadora" name="uso_secadora" min="0" step="any" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cant_tv">13. Televisores: cantidad:</label>
+                    <input type="number" id="cant_tv" name="cant_tv" min="0" required>
+                    <label for="horas_tv">Horas de uso diarias:</label>
+                    <input type="number" id="horas_tv" name="horas_tv" min="0" max="24" step="any" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cant_pc">14. Computadoras/laptops: cantidad:</label>
+                    <input type="number" id="cant_pc" name="cant_pc" min="0" required>
+                    <label for="horas_pc">Horas de uso diarias:</label>
+                    <input type="number" id="horas_pc" name="horas_pc" min="0" max="24" step="any" required>
+                </div>
+
+                <hr><h3>E. Climatización y calefacción</h3>
+                
+                <div class="form-group">
+                    <label for="cant_ac">15. ¿Tienes aire acondicionado? Número de unidades:</label>
+                    <input type="number" id="cant_ac" name="cant_ac" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="uso_ac_horas">16. Horas/días de uso del aire acondicionado:</label>
+                    <input type="number" id="uso_ac_horas" name="uso_ac_horas" min="0" max="24" step="any" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tipo_calentador">17. Tipo de calentador de agua:</label>
+                    <select id="tipo_calentador" name="tipo_calentador" required>
+                        <option value="electrico">Eléctrico</option>
+                        <option value="gas">Gas</option>
+                        <option value="solar">Solar</option>
+                        <option value="otro">Otro / Ninguno</option>
+                    </select>
+                </div>
+
+                <hr><h3>F. Hábitos de uso</h3>
+                
+                <div class="form-group">
+                    <label for="desconectar_aparatos">18. ¿Sueles desconectar aparatos que no usas?</label>
+                    <select id="desconectar_aparatos" name="desconectar_aparatos" required>
+                        <option value="si">Sí</option>
+                        <option value="a_veces">A veces</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="modo_standby">19. ¿Se quedan muchos aparatos en modo “standby”?</label>
+                    <select id="modo_standby" name="modo_standby" required>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="usos_inteligentes">20. ¿Usas regletas, temporizadores o enchufes inteligentes?</label>
+                    <select id="usos_inteligentes" name="usos_inteligentes" required>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+                <hr><h3>G. Infraestructura eléctrica</h3>
+                
+                <div class="form-group">
+                    <label for="antiguedad_instalacion_c">21. ¿La instalación eléctrica es reciente o antigua?</label>
+                    <select id="antiguedad_instalacion_c" name="antiguedad_instalacion_c" required>
+                        <option value="reciente">Reciente (menos de 5 años)</option>
+                        <option value="media">Media (5-15 años)</option>
+                        <option value="antigua">Antigua (más de 15 años)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mantenimiento_c">22. ¿Se ha realizado mantenimiento en los últimos 2 años?</label>
+                    <select id="mantenimiento_c" name="mantenimiento_c" required>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+                
+            {% elif user_type == 'empresa' %}
+            
+                <hr><h2>A. Datos de la empresa</h2>
+                
+                <div class="form-group">
+                    <label for="tipo_empresa">1. Tipo de empresa:</label>
+                    <select id="tipo_empresa" name="tipo_empresa" required>
+                        <option value="oficinas">Oficinas</option>
+                        <option value="comercial">Comercial</option>
+                        <option value="industrial">Industrial</option>
+                        <option value="servicios">Servicios</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="num_empleados">2. Número de empleados:</label>
+                    <input type="number" id="num_empleados" name="num_empleados" min="1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tamano_m2">3. Tamaño del inmueble (m²):</label>
+                    <input type="number" id="tamano_m2" name="tamano_m2" min="10" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="horario_operacion">4. Horario de operación por día (horas):</label>
+                    <input type="number" id="horario_operacion" name="horario_operacion" min="1" max="24" step="any" required>
+                </div>
+                
+                <hr><h3>B. Información del consumo eléctrico</h3>
+                
+                <div class="form-group">
+                    <label for="consumo_kwh">5. Consumo promedio mensual en kWh:</label>
+                    <input type="number" id="consumo_kwh" name="consumo_kwh" min="0" step="any" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="medidor_inteligente_e">6. ¿Cuenta con medidor inteligente?</label>
+                    <select id="medidor_inteligente_e" name="medidor_inteligente_e" required>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tarifa_electrica">7. ¿Qué tarifa eléctrica se usa? (ej. PDBT, GDMTH, etc.):</label>
+                    <input type="text" id="tarifa_electrica" name="tarifa_electrica" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="areas_alto_consumo">8. ¿Tiene áreas con alto consumo? (servidores, taller, producción):</label>
+                    <input type="text" id="areas_alto_consumo" name="areas_alto_consumo" placeholder="Especificar si/no y cuáles" required>
+                </div>
+
+                <hr><h3>C. Iluminación</h3>
+
+                <div class="form-group">
+                    <label for="tipo_luminarias">9. Tipo de luminarias principales:</label>
+                    <select id="tipo_luminarias" name="tipo_luminarias" required>
+                        <option value="led">LED</option>
+                        <option value="halógeno">Halógeno</option>
+                        <option value="fluorescente">Fluorescente</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cant_lamparas">10. Cantidad aproximada de lámparas:</label>
+                    <input type="number" id="cant_lamparas" name="cant_lamparas" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="sensores_presencia">11. ¿Se usan sensores de presencia o apagado automático?</label>
+                    <select id="sensores_presencia" name="sensores_presencia" required>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+                
+                <hr><h3>D. Equipos de oficina</h3>
+
+                <div class="form-group">
+                    <label for="num_computadoras">12. Número de computadoras:</label>
+                    <input type="number" id="num_computadoras" name="num_computadoras" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="horas_pc_uso">13. Horas de uso de computadoras por día:</label>
+                    <input type="number" id="horas_pc_uso" name="horas_pc_uso" min="0" max="24" step="any" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="monitores_puesto">14. Cantidad de monitores por puesto de trabajo (promedio):</label>
+                    <input type="number" id="monitores_puesto" name="monitores_puesto" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="impresoras_uso">15. Impresoras: tipo y frecuencia de uso:</label>
+                    <input type="text" id="impresoras_uso" name="impresoras_uso" placeholder="ej. Láser, diaria" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="standby_laboral">16. Equipos en standby después de horario laboral (ej. %):</label>
+                    <input type="number" id="standby_laboral" name="standby_laboral" min="0" max="100" required>
+                </div>
+
+                <hr><h3>E. Equipos especializados</h3>
+
+                <div class="form-group">
+                    <label for="usa_maquinaria">17. ¿La empresa usa maquinaria eléctrica?</label>
+                    <select id="usa_maquinaria" name="usa_maquinaria" required>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="maquinas_potencia">18. Tipo de máquinas y potencia aproximada (kW):</label>
+                    <input type="text" id="maquinas_potencia" name="maquinas_potencia" placeholder="ej. Tornos 5kW, Soldadoras 3kW" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="servidores_247">19. Servidores o racks activos 24/7 (Cantidad):</label>
+                    <input type="number" id="servidores_247" name="servidores_247" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="refrigeracion_industrial">20. Equipos de refrigeración industrial o comercial (Sí/No y tipo):</label>
+                    <input type="text" id="refrigeracion_industrial" name="refrigeracion_industrial" required>
+                </div>
+                
+                <hr><h3>F. Climatización y ventilación</h3>
+
+                <div class="form-group">
+                    <label for="cant_ac_e">24. ¿Cuántos aires acondicionados hay?</label>
+                    <input type="number" id="cant_ac_e" name="cant_ac_e" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="horas_operacion_ac">25. ¿Cuántas horas operan al día?</label>
+                    <input type="number" id="horas_operacion_ac" name="horas_operacion_ac" min="0" max="24" step="any" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="sistemas_ac">26. ¿Hay sistemas centrales o minisplits?</label>
+                    <input type="text" id="sistemas_ac" name="sistemas_ac" placeholder="Ej. 1 Central, 10 Minisplits" required>
+                </div>
+                
+                <hr><h3>G. Hábitos de consumo</h3>
+                
+                <div class="form-group">
+                    <label for="apagan_al_final">27. ¿Se apagan equipos al final de la jornada?</label>
+                    <select id="apagan_al_final" name="apagan_al_final" required>
+                        <option value="si">Sí, totalmente</option>
+                        <option value="parcial">Parcialmente</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="politicas_ahorro">28. ¿Se aplican políticas de ahorro energético?</label>
+                    <select id="politicas_ahorro" name="politicas_ahorro" required>
+                        <option value="si">Sí (ej. uso racional de A/C)</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="monitoreo_areas">29. ¿Hay monitoreo del consumo por áreas?</label>
+                    <select id="monitoreo_areas" name="monitoreo_areas" required>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+                <hr><h3>H. Infraestructura eléctrica</h3>
+                
+                <div class="form-group">
+                    <label for="antiguedad_instalacion_e">30. Antigüedad de la instalación eléctrica (años):</label>
+                    <input type="number" id="antiguedad_instalacion_e" name="antiguedad_instalacion_e" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="mantenimiento_reciente_e">31. Mantenimiento eléctrico reciente (últimos 2 años):</label>
+                    <select id="mantenimiento_reciente_e" name="mantenimiento_reciente_e" required>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="auditoria_energetica">32. ¿Se ha realizado auditoría energética en los últimos 2 años?</label>
+                    <select id="auditoria_energetica" name="auditoria_energetica" required>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            
+            {% else %}
+            
+                <p style="text-align: center; color: red;">Error: Tipo de usuario no definido. Por favor, vuelve a iniciar sesión.</p>
+            
+            {% endif %}
+
+            <div class="form-group">
+                <button type="submit">Enviar Cuestionario y Obtener Diagnóstico</button>
+            </div>
+
+        </form>
+        <a href="{{ url_for('logout') }}" class="back-link"> Cerrar Sesión</a>
+    </div>
+</body>
+</html>

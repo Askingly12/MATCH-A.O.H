@@ -2,20 +2,117 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Bienvenido al Apartado</title>
+    <title>Apartado 1.</title>
     <style>
         body { font-family: sans-serif; text-align: center; padding: 50px; background-color: #f4f4f9; }
         .container { max-width: 600px; margin: 0 auto; background-color: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .back-link { margin-top: 30px; display: block; font-size: 1.1em; color: #007bff; text-decoration: none; }
         .back-link:hover { text-decoration: underline; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .form-group button { background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em; }
+        .form-group button:hover { background-color: #218838; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎉 Bienvenido al Apartado: {{ titulo_apartado }}</h1>
-        <p>¡Has seleccionado correctamente! En el futuro, aquí estará el formulario de registro de consumo de energía.</p>
-        
+        <h1> Bienvenido: {{ titulo_apartado }}</h1>
+        <p>¡Has seleccionado correctamente! Por favor, registra la información de consumo de energía a continuación.</p>
+
+        <form id="registroConsumoForm">
+            <div class="form-group">
+                <label for="tipo_propiedad">Tipo de Propiedad:</label>
+                <select id="tipo_propiedad" name="tipo_propiedad" required onchange="mostrarCampos()">
+                    <option value="">Seleccione una opción</option>
+                    <option value="casa">Casa</option>
+                    <option value="edificio">Edificio/Negocio</option>
+                </select>
+            </div>
+
+            <div id="campos_consumo" class="hidden">
+                <hr>
+                <h2>Consumo Eléctrico Mensual</h2>
+                <div class="form-group">
+                    <label for="consumo_kwh">Consumo promedio mensual (kWh):</label>
+                    <input type="number" id="consumo_kwh" name="consumo_kwh" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="gasto_mxn">Gasto promedio mensual ($MXN):</label>
+                    <input type="number" id="gasto_mxn" name="gasto_mxn" min="0" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="antiguedad_equipo">Antigüedad promedio de equipos/línea (años):</label>
+                    <input type="number" id="antiguedad_equipo" name="antiguedad_equipo" min="0" required>
+                </div>
+            </div>
+
+            <div id="campos_casa" class="hidden">
+                <hr>
+                <h3>Información Adicional - Casa</h3>
+                <div class="form-group">
+                    <label for="num_habitantes">Número de habitantes:</label>
+                    <input type="number" id="num_habitantes" name="num_habitantes" min="1">
+                </div>
+                <div class="form-group">
+                    <label for="uso_aire">¿Utiliza aire acondicionado?</label>
+                    <select id="uso_aire" name="uso_aire">
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="campos_edificio" class="hidden">
+                <hr>
+                <h3>Información Adicional - Edificio/Negocio</h3>
+                <div class="form-group">
+                    <label for="tipo_negocio">Giro del Negocio:</label>
+                    <input type="text" id="tipo_negocio" name="tipo_negocio">
+                </div>
+                <div class="form-group">
+                    <label for="num_pisos">Número de pisos:</label>
+                    <input type="number" id="num_pisos" name="num_pisos" min="1">
+                </div>
+            </div>
+
+            <div id="boton_enviar" class="form-group hidden">
+                <button type="submit">Enviar Registro</button>
+            </div>
+
+        </form>
         <a href="{{ url_for('index') }}" class="back-link">← Volver a la Selección</a>
     </div>
+
+    <script>
+        function mostrarCampos() {
+            const tipoPropiedad = document.getElementById('tipo_propiedad').value;
+            const camposConsumo = document.getElementById('campos_consumo');
+            const camposCasa = document.getElementById('campos_casa');
+            const camposEdificio = document.getElementById('campos_edificio');
+            const botonEnviar = document.getElementById('boton_enviar');
+
+
+            camposConsumo.classList.add('hidden');
+            camposCasa.classList.add('hidden');
+            camposEdificio.classList.add('hidden');
+            botonEnviar.classList.add('hidden');
+
+
+            if (tipoPropiedad === 'casa') {
+                camposConsumo.classList.remove('hidden');
+                camposCasa.classList.remove('hidden');
+                botonEnviar.classList.remove('hidden');
+            } else if (tipoPropiedad === 'edificio') {
+                camposConsumo.classList.remove('hidden');
+                camposEdificio.classList.remove('hidden');
+                botonEnviar.classList.remove('hidden');
+            }
+
+        }
+    </script>
 </body>
 </html>

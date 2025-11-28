@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico de Consumo Energético</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
+    <style>
+        /* Estilos básicos para las columnas */
+        .container-diagnostico {
+            display: flex; /* Habilita Flexbox */
+            flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+            gap: 20px; /* Espacio entre las columnas */
+            justify-content: center; /* Centra el contenido horizontalmente */
+            padding: 20px;
+        }
+        .columna-grafica, .columna-informacion {
+            flex: 1; /* Permite que las columnas crezcan y se encojan */
+            min-width: 300px; /* Ancho mínimo para las columnas */
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .columna-grafica {
+            max-width: 450px; /* Ancho máximo para la columna de la gráfica */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centra la gráfica verticalmente si hay espacio */
+            justify-content: center; /* Centra la gráfica horizontalmente */
+        }
+        .columna-informacion {
+             max-width: 600px; /* Un poco más de espacio para el texto */
+        }
+
+        /* Estilos para los mensajes flash (mantener si existen) */
+        .flash-message {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .flash-message.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .flash-message.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .flash-message.warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .flash-message.info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+
+        .diagnostico-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .section-title {
+            color: #2c3e50;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            padding: 0;
+        }
+        ul li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="{{ url_for('cuestionario') }}">Cuestionario</a>
+            <a href="{{ url_for('historial') }}">Historial</a>
+            <a href="{{ url_for('logout') }}" class="btn-logout">Cerrar Sesión</a>
+        </nav>
+    </header>
+
+    <main>
+        <h1 class="diagnostico-header">Diagnóstico de Consumo Energético</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="container-diagnostico">
+            <div class="columna-grafica">
+                <h2 class="section-title">Análisis de Consumo</h2>
+                {{ graph_div | safe }} {# Aquí se incrusta el HTML de la gráfica #}
+                <p>Consumo actual: <strong>{{ registro.consumo_kwh | round(2) }} kWh</strong></p>
+                {% if consumo_promedio_anterior != "0.00" %}
+                    <p>Promedio histórico: <strong>{{ consumo_promedio_anterior }} kWh</strong></p>
+                {% else %}
+                    <p>Este es tu primer registro.</p>
+                {% endif %}
+                <p>Clasificación actual: <strong class="clasificacion-{{ clasificacion.lower() }}">{{ clasificacion }}</strong></p>
+            </div>
+
+            <div class="columna-informacion">
+                <h2 class="section-title">Detalles del Diagnóstico</h2>
+                <p><strong>Fecha de Registro:</strong> {{ registro.fecha.strftime('%d/%m/%Y %H:%M') }}</p>
+                
+                <h3>Problemas Identificados:</h3>
+                {% if problemas %}
+                    <ul>
+                        {% for problema in problemas %}
+                            <li>{{ problema }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No se identificaron problemas específicos en este registro.</p>
+                {% endif %}
+
+                <h3>Soluciones Sugeridas:</h3>
+                {% if soluciones %}
+                    <ul>
+                        {% for solucion in soluciones %}
+                            <li>{{ solucion }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No hay soluciones sugeridas específicas para este registro.</p>
+                {% endif %}
+
+                <h3 class="section-title">Detalles del Registro:</h3>
+                <p><strong>Tipo de Usuario:</strong> {{ tipo | capitalize }}</p>
+                {% if tipo == 'casa' %}
+                    <p><strong>Tipo de Vivienda:</strong> {{ registro.tipo_vivienda }}</p>
+                    <p><strong>Superficie (m²):</strong> {{ registro.superficie_m2 }}</p>
+                    <p><strong>Antigüedad Instalación:</strong> {{ registro.antiguedad_instalacion_c }}</p>
+                    <p><strong>Número de Habitantes:</strong> {{ registro.num_habitantes }}</p>
+                    {% elif tipo == 'empresa' %}
+                    <p><strong>Tipo de Empresa:</strong> {{ registro.tipo_empresa }}</p>
+                    <p><strong>Número de Empleados:</strong> {{ registro.num_empleados }}</p>
+                    <p><strong>Tamaño (m²):</strong> {{ registro.tamano_m2 }}</p>
+                    <p><strong>Antigüedad Instalación:</strong> {{ registro.antiguedad_instalacion_e }}</p>
+                    {% endif %}
+                
+                <a href="{{ url_for('cuestionario') }}" class="btn-primary">Volver al Cuestionario</a>
+                <a href="{{ url_for('historial') }}" class="btn-secondary">Ver Historial Completo</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Diagnóstico de Consumo Energético</p>
+    </footer>
+
+    <script>
+        // JS para colorear la clasificación (opcional)
+        document.addEventListener('DOMContentLoaded', function() {
+            const clasificacionElement = document.querySelector('.columna-grafica strong[class^="clasificacion-"]');
+            if (clasificacionElement) {
+                const clasificacion = clasificacionElement.textContent.trim().toLowerCase();
+                if (clasificacion === 'bajo') {
+                    clasificacionElement.style.color = '#28a745'; /* Verde */
+                } else if (clasificacion === 'medio') {
+                    clasificacionElement.style.color = '#ffc107'; /* Amarillo/Naranja */
+                } else if (clasificacion === 'alto') {
+                    clasificacionElement.style.color = '#dc3545'; /* Rojo */
+                }
+            }
+        });
+    </script>
+</body>
+</html>

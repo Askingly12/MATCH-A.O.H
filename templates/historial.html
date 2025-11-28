@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ titulo_apartado }}</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; background-color: #f4f4f9; }
+        .container { max-width: 1100px; margin: 0 auto; background-color: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-align: left; }
+        h1 { text-align: center; color: #007bff; margin-bottom: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        th { background-color: #007bff; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2e7; }
+        .back-link { margin-top: 30px; display: block; font-size: 1.1em; color: #6c757d; text-decoration: none; text-align: center; }
+        .back-link:hover { text-decoration: underline; }
+        .link-group { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px;}
+        .link-group a { flex-grow: 1; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ titulo_apartado }}</h1>
+
+        {% if registros %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID Reg.</th>
+                        <th>Fecha</th>
+                        <th>Consumo (kWh)</th>
+                        <th>Clasificación</th>
+                        <th>Antigüedad de Equipo (Años)</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reg in registros %}
+                    <tr>
+                        <td>{{ reg.id }}</td>
+                        <td>{{ reg.fecha.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ reg.consumo_kwh }}</td>
+                        <td>
+                            {% if reg.clasificacion == 'ALTO' %}
+                                <span style="color: #721c24; font-weight: bold;">{{ reg.clasificacion }}</span>
+                            {% elif reg.clasificacion == 'MEDIO' %}
+                                <span style="color: #856404; font-weight: bold;">{{ reg.clasificacion }}</span>
+                            {% else %}
+                                <span style="color: #155724; font-weight: bold;">{{ reg.clasificacion }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ reg.antiguedad_equipo }}</td>
+                        <td><a href="{{ url_for('diagnostico', tipo=user_type, registro_id=reg.id) }}" style="color: #007bff; text-decoration: none;">Ver Detalle</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="text-align: center;">Aún no tienes registros de consumo.</p>
+        {% endif %}
+
+        <div class="link-group">
+            <a href="{{ url_for('cuestionario') }}" class="back-link" style="color: #28a745; border-color: #28a745;">← Nuevo Registro</a>
+            <a href="{{ url_for('logout') }}" class="back-link"> Cerrar Sesión</a>
+        </div>
+    </div>
+</body>
+</html>

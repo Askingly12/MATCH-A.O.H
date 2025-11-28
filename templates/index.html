@@ -25,16 +25,16 @@
 </head>
 <body>
     <div class="container">
-        <h1>👋 Bienvenido al Sistema de Medición de Consumo de Energía</h1>
+        <h1> Bienvenido al Sistema de Medición de Consumo de Energía</h1>
         <p>Selecciona el tipo de usuario para acceder a la aplicación:</p>
         
         <div class="btn-group">
             <a href="{{ url_for('bienvenida', tipo_usuario='casa') }}">
-                <button id="btn-casa">🏠 Casa o Local</button>
+                <button id="btn-casa"> Casa o Local</button>
             </a>
             
             <a href="{{ url_for('bienvenida', tipo_usuario='empresa') }}">
-                <button id="btn-empresa">🏢 Empresa</button>
+                <button id="btn-empresa"> Empresa</button>
             </a>
         </div>
         
